@@ -19,9 +19,9 @@ const userSchema = new Schema(
     CP: String,
     username: String,
     password: String,
-    basket: [{ type: Schema.Types.ObjectId, ref: "Product", default:null }],
+    basket: [{productId:{type: Schema.Types.ObjectId, ref: "Product"}, quantity:Number}],
     favorites:[{ type: Schema.Types.ObjectId, ref: "Product", default:null }],
-    reviews: [{ type: Schema.Types.ObjectId, ref: "Review", default:null }],
+    reviews: [{reviewId:{type: Schema.Types.ObjectId, ref: "Review"}}],
   }
   , {
     timestamps: {
