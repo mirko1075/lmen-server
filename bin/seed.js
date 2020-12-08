@@ -64,19 +64,19 @@ mongoose
   })
   .then((usersCreated) => {
     console.log(`Created ${usersCreated.length} Users`);
-    const pr = Review.create(reviewArr);
-    return pr;
-  })
-  .then((createdReviews) => {
-    console.log(`Created ${createdReviews.length} Reviews`);
-    const reviewsIdsArr= [];
-    for (let i=0; i<createdReviews.length; i++){
-        reviewsIdsArr.push(createdReviews[i]._id)
-    }
-    const newProductArr= productArr.forEach((elem)=>{
-         elem.review=reviewsIdsArr;
-    })
-    console.log('productArr', productArr)
+    //   const pr = Review.create(reviewArr);
+    //   return pr;
+    // })
+    // .then((createdReviews) => {
+    //   console.log(`Created ${createdReviews.length} Reviews`);
+    // const reviewsIdsArr= [];
+    // for (let i=0; i<createdReviews.length; i++){
+    //     reviewsIdsArr.push(createdReviews[i]._id)
+    // }
+    // const newProductArr= productArr.forEach((elem)=>{
+    //      elem.review=reviewsIdsArr;
+    // })
+    // console.log('productArr', productArr)
     const pr = Product.create(productArr);
     return pr;
   })
