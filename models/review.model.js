@@ -6,7 +6,7 @@ const reviewSchema = new Schema(
     title: String,
     description: String,
     rate: Number,
-    reviewUser: { type: Schema.Types.ObjectId, ref: "User", default: null },
+    reviewUser: { type: Schema.Types.ObjectId, ref: "User" },
     reviewProduct: {
       type: Schema.Types.ObjectId,
       ref: "Product",

@@ -5,6 +5,7 @@ const Product = require("../models/product.model");
 const User = require("../models/user.model");
 const Review = require("../models/review.model");
 const ReviewsRelational = require("../models/reviewsRelational.model");
+
 // HELPER FUNCTIONS
 const {
   isLoggedIn,
@@ -30,8 +31,15 @@ router.get("/products/:productId", (req, res, next) => {
   console.log("Product detail");
   const productId = req.params.productId;
   Product.findById(productId)
-    .populate("review")
+    // .populate("review")
+    .populate({
+      path: "review",
+      populate: {
+        path: "reviewUser",
+      },
+    })
     .then((productFound) => {
+      console.log("productFound :>> ", productFound);
       res.json(productFound);
     })
     .catch((err) => {
