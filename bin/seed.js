@@ -1,8 +1,8 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const User = require("./../models/User.model");
-const Product = require("./../models/Product.model");
-const Review = require("./../models/Review.model");
+const User = require("./../models/user.model");
+const Product = require("./../models/product.model");
+const Review = require("./../models/review.model");
 const userArr = require("./user-mockup");
 const productArr = require("./product-mockup");
 const reviewArr = require("./review-mockup");
