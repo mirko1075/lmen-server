@@ -60,6 +60,30 @@ router.get("/cart", (req, res, next) => {
       next(createError(err));
     });
 });
+
+// GET '/products/categories' Get all products
+router.get("/categories", (req, res, next) => {
+  console.log("/categories GET");
+  Product.find()
+    .then((productsFound) => {
+      const categoriesArr = [];
+      productsFound.forEach((elem) => {
+        console.log("elem :>> ", elem);
+        categoriesArr.push(elem.category);
+      });
+      const onlyUnique = (value, index, self) => {
+        return self.indexOf(value) === index;
+      };
+
+      const response = { data: categoriesArr.filter(onlyUnique) };
+      console.log("response :>> ", response);
+      res.json(response);
+    })
+    .catch((err) => {
+      next(createError(err));
+    });
+});
+
 // post '/cart' Update cart
 router.post("/cart", (req, res, next) => {
   const userId = req.session.currentUser._id;
