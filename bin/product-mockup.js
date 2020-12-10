@@ -385,6 +385,39 @@ const products = [
     material: "Strips of fabric",
     price: "90",
   },
+  {
+    image: "WUL005",
+    name: "Unisex wallet yellow alligator leather animal print",
+    description:
+      "Unisex wallet made of yellow alligator leather animal print. With compartiments for credit card, money and documents",
+    dimension: "9 x 12,5 cm x 0,6 mm",
+    category: "Unisex wallet",
+    technic: "",
+    material: "Leather",
+    price: 30,
+  },
+  {
+    image: "BWC006",
+    name: "Woman bag in crochet",
+    description:
+      "Woman bag in handmade crochet with cotton thread and leather handle and leather finishing with zipper. Internal polyester lining with two pockets, one of them with zipper",
+    dimension: "30 x 35 x 8 cm",
+    category: "Woman bag",
+    technic: "Crochet",
+    material: "Cotton thread",
+    price: "90",
+  },
+  {
+    image: "BWC005",
+    name: "Woman round crochet bag",
+    description:
+      "Woman round bag made in crochet and leather details, gold and leather chain handle with decoration in crochet flowers and fabric.  Zipper finishing, contains one internal zipper pocket and internal canvas lining",
+    dimension: "26 x 26 x 10 cm",
+    category: "Woman bag",
+    technic: "Crochet",
+    material: "Leather and thread",
+    price: "97",
+  },
 ];
 
 module.exports = products;
