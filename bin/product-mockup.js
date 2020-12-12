@@ -354,7 +354,7 @@ const products = [
   },
   {
     image: "BWC003",
-    name: "Wonan bag strips of crochet",
+    name: "Woman bag strips of crochet",
     description:
       "Woman bag made with strips of crochet fabric, handle blue snake leather animal print and decoration in beads blue and silver with leather finishing in zipper and contains two internal pockets, one of them with zipper and internal canvas lining",
     dimension: "30 x 35 x10 cm",

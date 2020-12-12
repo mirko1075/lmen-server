@@ -128,19 +128,37 @@ router.get("/me", isLoggedIn, (req, res, next) => {
 
 // GET '/auth/cart'
 router.get("/cart", isLoggedIn, (req, res, next) => {
-  const currentUserSessionData = req.session.currentUser.basket;
+  const currentUserSessionData = req.session.currentUser.cart;
   console.log("currentUserSessionData :>> ", currentUserSessionData);
-  res.status(200).json(currentUserSessionData);
+  const pr = User.findById(currentUserSessionData)
+    .then((userFound) => {
+      const cart = userFound.cart;
+      res.status(200).json(cart);
+    })
+    .catch((err) => {
+      console.log("Error retriving user cart :>> ", err);
+    });
 });
 
-// GET '/auth/cart'
+// POST '/auth/cart'
 router.post("/cart", isLoggedIn, (req, res, next) => {
   const { cart } = req.body;
+  // console.log("req.body from route :>> ", req.body);
   console.log("cart from route :>> ", cart);
+  const cartItem = { cart };
+  console.log("cartItem :>> ", cartItem);
   const currentUserSessionData = req.session.currentUser._id;
-  User.findByIdAndUpdate(currentUserSessionData, { basket: cart });
-  console.log("currentUserSessionData :>> ", currentUserSessionData);
-  res.status(200).json(currentUserSessionData);
+  const pr = User.updateOne(
+    { _id: currentUserSessionData },
+    { $set: { cart: cartItem } }
+  )
+    .then((userUpdated) => {
+      console.log("userUpdated :>> ", userUpdated);
+      res.status(200).json(userUpdated);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    });
 });
 
 module.exports = router;

@@ -19,10 +19,12 @@ const userSchema = new Schema(
     CP: { type: String, default: null },
     image: String,
     password: String,
-    basket: [
+
+    cart: [
       {
-        productId: { type: Schema.Types.ObjectId, ref: "Product" },
-        quantity: Number,
+        id: { type: Schema.Types.ObjectId, ref: "Product" },
+        product: Object,
+        amount: Number,
       },
     ],
     favorites: [{ type: Schema.Types.ObjectId, ref: "Product", default: null }],
