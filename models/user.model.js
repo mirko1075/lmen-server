@@ -18,7 +18,6 @@ const userSchema = new Schema(
     state: { type: String, default: null },
     CP: { type: String, default: null },
     image: String,
-    username: { type: String, default: null },
     password: String,
     basket: [
       {

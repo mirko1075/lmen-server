@@ -19,7 +19,41 @@ router.get("/products", (req, res, next) => {
   Product.find()
     .populate("review")
     .then((productList) => {
-      res.json(productList);
+      res.status(200).json(productList);
+    })
+    .catch((err) => {
+      next(createError(err));
+    });
+});
+
+// GET '/products' Get all products
+router.post("/products", (req, res, next) => {
+  const {
+    image,
+    name,
+    description,
+    dimension,
+    category,
+    technic,
+    material,
+    price,
+    stock,
+  } = req.body;
+  console.log("Product list");
+  Product.create({
+    image,
+    name,
+    description,
+    dimension,
+    category,
+    technic,
+    material,
+    price,
+    stock,
+  })
+
+    .then((productList) => {
+      res.status(200).json(productList);
     })
     .catch((err) => {
       next(createError(err));
@@ -39,8 +73,8 @@ router.get("/products/:productId", (req, res, next) => {
       },
     })
     .then((productFound) => {
-      console.log("productFound :>> ", productFound);
-      res.json(productFound);
+      // console.log("productFound :>> ", productFound);
+      res.status(200).json(productFound);
     })
     .catch((err) => {
       next(createError(err));
@@ -54,21 +88,21 @@ router.get("/cart", (req, res, next) => {
   User.findById(userId)
     .populate("basket")
     .then((userFound) => {
-      res.json(userFound);
+      res.status(200).json(userFound);
     })
     .catch((err) => {
       next(createError(err));
     });
 });
 
-// GET '/products/categories' Get all products
+// GET '/products/categories'
 router.get("/categories", (req, res, next) => {
   console.log("/categories GET");
   Product.find()
     .then((productsFound) => {
       const categoriesArr = [];
       productsFound.forEach((elem) => {
-        console.log("elem :>> ", elem);
+        // console.log("elem :>> ", elem);
         categoriesArr.push(elem.category);
       });
       const onlyUnique = (value, index, self) => {
@@ -76,8 +110,22 @@ router.get("/categories", (req, res, next) => {
       };
 
       const response = { data: categoriesArr.filter(onlyUnique) };
-      console.log("response :>> ", response);
-      res.json(response);
+      // console.log("response :>> ", response);
+      res.status(200).json(response);
+    })
+    .catch((err) => {
+      next(createError(err));
+    });
+});
+
+// GET '/products per categories' Get all products
+router.get("/categories/:category", (req, res, next) => {
+  console.log(" products per categoriesr GET");
+  const category = req.params.category;
+  Product.find({ category })
+    .then((productList) => {
+      // console.log("productList :>> ", productList);
+      res.status(200).json(productList);
     })
     .catch((err) => {
       next(createError(err));
@@ -90,7 +138,7 @@ router.post("/cart", (req, res, next) => {
   const basket = req.body;
   User.findByIdAndUpdate({ _id: userId }, { basket: basket })
     .then((userFound) => {
-      res.json(userFound);
+      res.status(200).json(userFound);
     })
     .catch((err) => {
       next(createError(err));
@@ -162,7 +210,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
     .then((reviewCreated) => {
       review = reviewCreated;
       reviewId = reviewCreated._id;
-      console.log("reviewId :>> ", reviewId);
+      // console.log("reviewId :>> ", reviewId);
       const pr = ReviewsRelational.create({ userId, reviewId, productId });
       return pr;
     })
@@ -171,7 +219,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
       return pr;
     })
     .then((productFound) => {
-      console.log("ProductFound :>> ", productFound);
+      // console.log("ProductFound :>> ", productFound);
       let productreviewArr = productFound.review;
       productreviewArr.push(reviewId);
 
@@ -183,7 +231,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
       return pr;
     })
     .then((productModified) => {
-      res.json(review);
+      res.status(200).json(review);
     })
     .catch((err) => {
       next(createError(err));
@@ -203,9 +251,9 @@ router.get("/product/:productId/review/:reviewId", (req, res, next) => {
     })
     .then((productFound) => {
       let reviewsProductArr = productFound.review;
-      console.log("reviewsProductArr :>> ", reviewsProductArr);
+      // console.log("reviewsProductArr :>> ", reviewsProductArr);
       for (let index = 0; index < reviewsProductArr.length; index++) {
-        console.log("reviewsProductArr[index] :>> ", reviewsProductArr[index]);
+        // console.log("reviewsProductArr[index] :>> ", reviewsProductArr[index]);
         if (reviewsProductArr[index] == reviewId) {
           reviewsProductArr.splice(index, 1);
         }
@@ -221,7 +269,7 @@ router.get("/product/:productId/review/:reviewId", (req, res, next) => {
       return pr;
     })
     .then((userModified) => {
-      res.json(review);
+      res.status(200).json(review);
     })
     .catch((err) => {
       next(createError(err));

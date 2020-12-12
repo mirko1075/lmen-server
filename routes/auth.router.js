@@ -14,11 +14,26 @@ const {
 
 // POST '/auth/signup'
 router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
-  const { email, password } = req.body;
-
+  const {
+    firstName,
+    lastName,
+    address,
+    country,
+    CP,
+    city,
+    state,
+    phoneNumber,
+    gender,
+    birthDateDay,
+    birthDateMonth,
+    birthDateYear,
+    email,
+    password,
+  } = req.body;
+  console.log("SIGNING UP FROM AUTH.ROUTER");
   User.findOne({ email })
     .then((foundUser) => {
-      // console.log("foundUser :>> ", foundUser);
+      console.log("foundUser :>> ", foundUser);
       if (foundUser) {
         // If email is already taken, then return error response
 
@@ -28,7 +43,22 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
         const salt = bcrypt.genSaltSync(saltRounds);
         const encryptedPassword = bcrypt.hashSync(password, salt);
 
-        User.create({ email, password: encryptedPassword })
+        User.create({
+          email,
+          password: encryptedPassword,
+          firstName,
+          lastName,
+          address,
+          country,
+          CP,
+          city,
+          state,
+          phoneNumber,
+          gender,
+          birthDateDay,
+          birthDateMonth,
+          birthDateYear,
+        })
           .then((createdUser) => {
             // set the `req.session.currentUser` using newly created user object, to trigger creation of the session and cookie
             createdUser.password = "*";
@@ -93,6 +123,13 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
 router.get("/me", isLoggedIn, (req, res, next) => {
   const currentUserSessionData = req.session.currentUser;
 
+  res.status(200).json(currentUserSessionData);
+});
+
+// GET '/auth/cart'
+router.get("/cart", isLoggedIn, (req, res, next) => {
+  const currentUserSessionData = req.session.currentUser.basket;
+  console.log("currentUserSessionData :>> ", currentUserSessionData);
   res.status(200).json(currentUserSessionData);
 });
 
