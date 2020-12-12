@@ -133,4 +133,14 @@ router.get("/cart", isLoggedIn, (req, res, next) => {
   res.status(200).json(currentUserSessionData);
 });
 
+// GET '/auth/cart'
+router.post("/cart", isLoggedIn, (req, res, next) => {
+  const { cart } = req.body;
+  console.log("cart from route :>> ", cart);
+  const currentUserSessionData = req.session.currentUser._id;
+  User.findByIdAndUpdate(currentUserSessionData, { basket: cart });
+  console.log("currentUserSessionData :>> ", currentUserSessionData);
+  res.status(200).json(currentUserSessionData);
+});
+
 module.exports = router;
