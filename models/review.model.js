@@ -4,10 +4,10 @@ const Schema = mongoose.Schema;
 const reviewSchema = new Schema(
   {
     title: String,
-    description: String,
+    message: String,
     rate: Number,
-    reviewUser: { type: Schema.Types.ObjectId, ref: "User" },
-    reviewProduct: {
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
+    productId: {
       type: Schema.Types.ObjectId,
       ref: "Product",
       default: null,

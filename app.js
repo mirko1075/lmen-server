@@ -19,6 +19,7 @@ mongoose
     keepAlive: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    new: true,
   })
   .then(() => console.log(`Connected to database`))
   .catch((err) => console.error(err));

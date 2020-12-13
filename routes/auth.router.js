@@ -14,6 +14,7 @@ const {
 
 // POST '/auth/signup'
 router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
+  console.log("Signup");
   const {
     firstName,
     lastName,
@@ -80,6 +81,7 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
 
 // POST '/auth/login'
 router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
+  console.log("Login");
   const { email, password } = req.body;
 
   User.findOne({ email })
@@ -108,6 +110,7 @@ router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
 
 // GET '/auth/logout'
 router.get("/logout", isLoggedIn, (req, res, next) => {
+  console.log("Logout");
   req.session.destroy(function (err) {
     if (err) {
       return next(err);
@@ -121,37 +124,51 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
 
 // GET '/auth/me'
 router.get("/me", isLoggedIn, (req, res, next) => {
-  const currentUserSessionData = req.session.currentUser;
+  console.log("Me :>> ");
+  currentUserSessionData = req.session.currentUser;
 
   res.status(200).json(currentUserSessionData);
 });
 
 // GET '/auth/cart'
 router.get("/cart", isLoggedIn, (req, res, next) => {
-  const currentUserSessionData = req.session.currentUser.cart;
-  console.log("currentUserSessionData :>> ", currentUserSessionData);
-  const pr = User.findById(currentUserSessionData)
-    .then((userFound) => {
-      const cart = userFound.cart;
-      res.status(200).json(cart);
-    })
-    .catch((err) => {
-      console.log("Error retriving user cart :>> ", err);
-    });
+  if (req.session.currentUser) {
+    const currentUserSessionData = req.session.currentUser;
+    console.log("currentUserSessionData :>> ", currentUserSessionData);
+    const pr = User.findById(currentUserSessionData)
+      .then((userFound) => {
+        const cart = userFound.cart;
+        console.log("Retriving cart :>> ", cart);
+        res.status(200).json(cart);
+      })
+      .catch((err) => {
+        console.log("Error retriving user cart :>> ", err);
+      });
+  } else {
+    es.status(200).json({});
+  }
 });
 
 // POST '/auth/cart'
 router.post("/cart", isLoggedIn, (req, res, next) => {
-  const { cart } = req.body;
-  // console.log("req.body from route :>> ", req.body);
+  const cart = req.body;
+  console.log("req.body from route :>> ", req.body);
   console.log("cart from route :>> ", cart);
-  const cartItem = { cart };
-  console.log("cartItem :>> ", cartItem);
+  // const cartItem = { id: cart.id, amount: cart.amount };
+  // const cartItem = cart;
+  // console.log("cartItem :>> ", cartItem);
   const currentUserSessionData = req.session.currentUser._id;
-  const pr = User.updateOne(
-    { _id: currentUserSessionData },
-    { $set: { cart: cartItem } }
-  )
+
+  // const pr = User.findOneAndUpdate(
+  //   { _id: currentUserSessionData },
+  //   { $set: { cart: cartItem } }
+  // )
+
+  const pr = User.findByIdAndUpdate(currentUserSessionData, {
+    $set: {
+      cart: cart,
+    },
+  })
     .then((userUpdated) => {
       console.log("userUpdated :>> ", userUpdated);
       res.status(200).json(userUpdated);
