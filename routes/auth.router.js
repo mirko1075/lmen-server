@@ -108,6 +108,24 @@ router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
     });
 });
 
+// POST '/auth/login'
+router.get("/user", isLoggedIn, (req, res, next) => {
+  console.log("Get User");
+  const userId = req.session.currentUser._id;
+
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        // If user with that email can't be found, respond with an error
+        return next(createError(404)); // Not Found
+      }
+      res.status(200).json(user);
+    })
+    .catch((err) => {
+      next(createError(err));
+    });
+});
+
 // GET '/auth/logout'
 router.get("/logout", isLoggedIn, (req, res, next) => {
   console.log("Logout");
@@ -128,6 +146,75 @@ router.get("/me", isLoggedIn, (req, res, next) => {
   currentUserSessionData = req.session.currentUser;
 
   res.status(200).json(currentUserSessionData);
+});
+
+// POST '/auth/editProfile'
+router.post("/editProfile", isLoggedIn, (req, res, next) => {
+  console.log("Edit Profile");
+  const {
+    firstName,
+    lastName,
+    address,
+    country,
+    CP,
+    city,
+    state,
+    phoneNumber,
+    gender,
+    birthDateDay,
+    birthDateMonth,
+    birthDateYear,
+    password,
+  } = req.body;
+  console.log("req.body :>> ", req.body);
+  const userId = req.session.currentUser._id;
+  console.log("userId :>> ", userId);
+  User.findById(userId)
+    .then((user) => {
+      console.log("user :>> ", user);
+      if (!user) {
+        // If user with that email can't be found, respond with an error
+        return next(createError(404)); // Not Found
+      }
+      console.log("password, user.password :>> ", password, user.password);
+      const passwordIsValid = bcrypt.compareSync(password, user.password); //  true/false
+      console.log("passwordIsValid :>> ", passwordIsValid);
+      if (passwordIsValid) {
+        // set the `req.session.currentUser`, to trigger creation of the session
+        // res.status(200).json(user);
+        // If email is available, go and create a new user
+        const salt = bcrypt.genSaltSync(saltRounds);
+        const encryptedPassword = bcrypt.hashSync(password, salt);
+        User.findByIdAndUpdate(userId, {
+          password: encryptedPassword,
+          firstName,
+          lastName,
+          address,
+          country,
+          CP,
+          city,
+          state,
+          phoneNumber,
+          gender,
+          birthDateDay,
+          birthDateMonth,
+          birthDateYear,
+        })
+          .then((modifiedUser) => {
+            res
+              .status(200) // Modified
+              .json(modifiedUser); // res.send()
+          })
+          .catch((err) => {
+            next(createError(err)); //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
+          });
+      } else {
+        next(createError(401)); // Unathorized
+      }
+    })
+    .catch((err) => {
+      next(createError(err));
+    });
 });
 
 // GET '/auth/cart'
@@ -177,6 +264,27 @@ router.post("/cart", isLoggedIn, (req, res, next) => {
   })
     .then((userUpdated) => {
       console.log("userUpdated :>> ", userUpdated.cart);
+      res.status(200).json(userUpdated);
+    })
+    .catch((err) => {
+      console.log("err", err);
+    });
+});
+
+// POST '/auth/favorites'
+router.post("/favorites", isLoggedIn, (req, res, next) => {
+  const userId = req.session.currentUser;
+  const { productId } = req.body;
+
+  const pr = User.findByIdAndUpdate(userId, {
+    $push: {
+      favorites: {
+        productId,
+      },
+    },
+  })
+    .then((userUpdated) => {
+      console.log("userUpdated :>> ", userUpdated.favorites);
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
