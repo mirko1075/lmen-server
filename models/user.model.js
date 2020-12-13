@@ -22,7 +22,7 @@ const userSchema = new Schema(
 
     cart: [
       {
-        id: { type: Schema.Types.ObjectId, ref: "Product" },
+        productId: { type: Schema.Types.ObjectId, ref: "Product" },
         amount: Number,
       },
     ],

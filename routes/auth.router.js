@@ -136,6 +136,12 @@ router.get("/cart", isLoggedIn, (req, res, next) => {
     const currentUserSessionData = req.session.currentUser;
     console.log("currentUserSessionData :>> ", currentUserSessionData);
     const pr = User.findById(currentUserSessionData)
+      .populate({
+        path: "cart",
+        populate: {
+          path: "productId",
+        },
+      })
       .then((userFound) => {
         const cart = userFound.cart;
         console.log("Retriving cart :>> ", cart);
@@ -170,7 +176,7 @@ router.post("/cart", isLoggedIn, (req, res, next) => {
     },
   })
     .then((userUpdated) => {
-      console.log("userUpdated :>> ", userUpdated);
+      console.log("userUpdated :>> ", userUpdated.cart);
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
