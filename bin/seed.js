@@ -2,10 +2,8 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const User = require("./../models/user.model");
 const Product = require("./../models/product.model");
-const Review = require("./../models/review.model");
 const userArr = require("./user-mockup");
 const productArr = require("./product-mockup");
-const reviewArr = require("./review-mockup");
 
 //Connection to DB parameters
 const DB_NAME = process.env.DB_NAME.toString();
