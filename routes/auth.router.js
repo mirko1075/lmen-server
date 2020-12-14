@@ -220,9 +220,9 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
 // GET '/auth/cart'
 router.get("/cart", isLoggedIn, (req, res, next) => {
   if (req.session.currentUser) {
-    const currentUserSessionData = req.session.currentUser;
-    //console.log("currentUserSessionData :>> ", currentUserSessionData);
-    const pr = User.findById(currentUserSessionData)
+    const userId = req.session.currentUser._id;
+    console.log("currentUserSessionData :>> ", currentUserSessionData);
+    const pr = User.findById(userId)
       .populate({
         path: "cart",
         populate: {
@@ -231,11 +231,11 @@ router.get("/cart", isLoggedIn, (req, res, next) => {
       })
       .then((userFound) => {
         const cart = userFound.cart;
-        //console.log("Retriving cart :>> ", cart);
+        console.log("Retriving cart :>> ", cart);
         res.status(200).json(cart);
       })
       .catch((err) => {
-        //console.log("Error retriving user cart :>> ", err);
+        console.log("Error retriving user cart :>> ", err);
       });
   } else {
     es.status(200).json({});
