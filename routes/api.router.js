@@ -15,7 +15,7 @@ const {
 
 // GET '/products' Get all products
 router.get("/products", (req, res, next) => {
-  //console.log("Product list");
+  console.log("Product list");
   Product.find()
     .populate({
       path: "review",
