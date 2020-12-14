@@ -47,10 +47,11 @@ function randomize(arr) {
 // ESTABILISH DB CONNECTION
 
 mongoose
-  .connect(DB_CONN_STR, {
+  .connect(process.env.MONGODB_URI, {
+    keepAlive: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false,
+    new: true,
   })
   .then((x) => {
     console.log("Connected to DB " + DB_NAME);
