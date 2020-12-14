@@ -272,15 +272,13 @@ router.post("/cart", isLoggedIn, (req, res, next) => {
 });
 
 // POST '/auth/favorites'
-router.post("/favorites", isLoggedIn, (req, res, next) => {
+router.post("/favourites", isLoggedIn, (req, res, next) => {
   const userId = req.session.currentUser;
-  const { productId } = req.body;
+  const { productId, favourite } = req.body;
 
   const pr = User.findByIdAndUpdate(userId, {
-    $push: {
-      favorites: {
-        productId,
-      },
+    $set: {
+      favorites: favourite,
     },
   })
     .then((userUpdated) => {
