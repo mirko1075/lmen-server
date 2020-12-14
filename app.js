@@ -33,6 +33,8 @@ app.use(
     credentials: true,
     origin: [
       "http://localhost:3000",
+      "http://localhost",
+      "http://127.0.0.1",
       "https://lmen-confeccion.herokuapp.com",
       "https://lmen-confeccion.herokuapp.com",
     ],
