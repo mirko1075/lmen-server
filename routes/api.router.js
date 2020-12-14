@@ -15,7 +15,7 @@ const {
 
 // GET '/products' Get all products
 router.get("/products", (req, res, next) => {
-  console.log("Product list");
+  console.log("Get product list");
   Product.find()
     .populate({
       path: "review",
@@ -24,6 +24,7 @@ router.get("/products", (req, res, next) => {
       },
     })
     .then((productList) => {
+      console.log("productList :>> ", productList);
       res.status(200).json(productList);
     })
     .catch((err) => {
@@ -31,8 +32,9 @@ router.get("/products", (req, res, next) => {
     });
 });
 
-// GET '/products' Get all products
+// GET '/products' Create Product
 router.post("/products", (req, res, next) => {
+  console.log("Add product");
   const {
     image,
     name,
@@ -44,7 +46,7 @@ router.post("/products", (req, res, next) => {
     price,
     stock,
   } = req.body;
-  //console.log("Product list");
+
   Product.create({
     image,
     name,
@@ -67,7 +69,7 @@ router.post("/products", (req, res, next) => {
 
 // GET '/products/:productId' Get all products
 router.get("/products/:productId", (req, res, next) => {
-  //console.log("Product detail");
+  console.log("Get product detail");
   const productId = req.params.productId;
   Product.findById(productId)
     // .populate("review")
@@ -86,9 +88,9 @@ router.get("/products/:productId", (req, res, next) => {
     });
 });
 
-// GET '/:productId' Get all products
+// GET '/cart' Get all products
 router.get("/cart", (req, res, next) => {
-  //console.log("/cart get");
+  console.log("Get user cart");
   const userId = req.session.currentUser._id;
   User.findById(userId)
     .populate("basket")
@@ -102,7 +104,7 @@ router.get("/cart", (req, res, next) => {
 
 // GET '/products/categories'
 router.get("/categories", (req, res, next) => {
-  //console.log("/categories GET");
+  console.log(" Get categories");
   Product.find()
     .then((productsFound) => {
       const categoriesArr = [];
@@ -125,7 +127,7 @@ router.get("/categories", (req, res, next) => {
 
 // GET '/products per categories' Get all products
 router.get("/categories/:category", (req, res, next) => {
-  //console.log(" products per categoriesr GET");
+  console.log("Get products per categories");
   const category = req.params.category;
   Product.find({ category })
     .then((productList) => {
@@ -139,6 +141,7 @@ router.get("/categories/:category", (req, res, next) => {
 
 // post '/cart' Update cart
 router.post("/cart", (req, res, next) => {
+  console.log("Update user Cart");
   const userId = req.session.currentUser._id;
   const basket = req.body;
   User.findByIdAndUpdate({ _id: userId }, { basket: basket })
@@ -150,61 +153,9 @@ router.post("/cart", (req, res, next) => {
     });
 });
 
-// COMMENTED BECAUSE I CREATED A RELATIONAL COLLECTION
-// // POST  product/:productId/reviews / Create product reviews
-// router.post("/product/:productId/reviews", (req, res, next) => {
-//   //console.log("reviews post");
-//   const userId = req.session.currentUser._id;
-//   const { title, description, rate, reviewUser, productId } = req.body;
-//   let reviewsUser = [];
-//   let reviewId = null;
-//   // CREATING REVIEW
-//   Review.create({ title, description, rate, reviewUser, productId })
-//     .then((reviewCreated) => {
-//       const pr = User.findById(userId);
-//       reviewId = reviewCreated._id;
-//       reviewsUser.push(reviewId);
-//       return pr;
-//     })
-//     .then((userFound) => {
-//       let reviewsUserArr = [...reviewsUser];
-//       for (let index = 0; index < userFound.reviews.length; index++) {
-//         reviewsUserArr.push(userFound.reviews[index]._id);
-//       }
-//       // POPULATING USER WITH THE REVIEW ID
-//       const pr = User.findByIdAndUpdate(
-//         { _id: userId },
-//         { reviews: reviewsUserArr }
-//       );
-//       return pr;
-//     })
-//     .then((userModified) => {
-//       //RETRIVING PRODUCT REVIEWS
-//       const pr = Product.findById(productId);
-//       return pr;
-//     })
-//     .then((productFound) => {
-//       let productreviewArr = productFound.review;
-//       productreviewArr.push(reviewId);
-
-//       //UPDATING PRODUCT REVIEWS
-//       const pr = User.findByIdAndUpdate(
-//         { _id: productFound._id },
-//         { reviews: productreviewArr }
-//       );
-//       return pr;
-//     })
-//     .then((productModified) => {
-//       res.json(productModified);
-//     })
-//     .catch((err) => {
-//       next(createError(err));
-//     });
-// });
-
 // POST  product/:productId/reviews / Create product reviews
 router.post("/product/:productId/reviews", (req, res, next) => {
-  //console.log("reviews create post");
+  console.log("reviews create post");
   const userId = req.session.currentUser._id;
   const { title, message, rate, productId } = req.body;
   let review = null;
@@ -244,6 +195,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
 
 //`/api/product/:productId/reviews`
 router.get("/product/:productId/review/:reviewId", (req, res, next) => {
+  console.log("Removing review");
   const productId = req.params.productId;
   const reviewId = req.params.reviewId;
   let review = null;
