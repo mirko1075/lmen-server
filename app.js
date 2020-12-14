@@ -69,6 +69,7 @@ app.use("/private", privateRouter);
 // ROUTE FOR SERVING REACT APP (index.html)
 app.use((req, res, next) => {
   // If no previous routes match the request, send back the React app.
+  console.log(req);
   res.sendFile(__dirname + "/public/index.html");
 });
 // ERROR HANDLING
