@@ -14,7 +14,7 @@ const {
 
 // POST '/auth/signup'
 router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
-  //console.log("Signup");
+  console.log("Signup");
   const {
     firstName,
     lastName,
@@ -81,7 +81,7 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
 
 // POST '/auth/login'
 router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
-  //console.log("Login");
+  console.log("Login");
   const { email, password } = req.body;
 
   User.findOne({ email })
@@ -110,7 +110,7 @@ router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
 
 // POST '/auth/login'
 router.get("/user", isLoggedIn, (req, res, next) => {
-  //console.log("Get User");
+  console.log("Get User");
   const userId = req.session.currentUser._id;
 
   User.findById(userId)
@@ -128,7 +128,7 @@ router.get("/user", isLoggedIn, (req, res, next) => {
 
 // GET '/auth/logout'
 router.get("/logout", isLoggedIn, (req, res, next) => {
-  //console.log("Logout");
+  console.log("Logout");
   req.session.destroy(function (err) {
     if (err) {
       return next(err);
@@ -150,7 +150,7 @@ router.get("/me", isLoggedIn, (req, res, next) => {
 
 // POST '/auth/editProfile'
 router.post("/editProfile", isLoggedIn, (req, res, next) => {
-  //console.log("Edit Profile");
+  console.log("Edit Profile");
   const {
     firstName,
     lastName,
@@ -219,9 +219,10 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
 
 // GET '/auth/cart'
 router.get("/cart", isLoggedIn, (req, res, next) => {
+  console.log("Get Cart> ");
   if (req.session.currentUser) {
     const userId = req.session.currentUser._id;
-    console.log("currentUserSessionData :>> ", currentUserSessionData);
+    // console.log("currentUserSessionData :>> ", currentUserSessionData);
     const pr = User.findById(userId)
       .populate({
         path: "cart",
