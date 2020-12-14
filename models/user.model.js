@@ -26,7 +26,9 @@ const userSchema = new Schema(
         amount: Number,
       },
     ],
-    favorites: [{ type: Schema.Types.ObjectId, ref: "Product", default: null }],
+    favourites: [
+      { type: Schema.Types.ObjectId, ref: "Product", default: null },
+    ],
     reviews: [{ reviewId: { type: Schema.Types.ObjectId, ref: "Review" } }],
   },
   {

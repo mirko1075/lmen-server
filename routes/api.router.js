@@ -15,7 +15,7 @@ const {
 
 // GET '/products' Get all products
 router.get("/products", (req, res, next) => {
-  console.log("Product list");
+  //console.log("Product list");
   Product.find()
     .populate({
       path: "review",
@@ -44,7 +44,7 @@ router.post("/products", (req, res, next) => {
     price,
     stock,
   } = req.body;
-  console.log("Product list");
+  //console.log("Product list");
   Product.create({
     image,
     name,
@@ -67,7 +67,7 @@ router.post("/products", (req, res, next) => {
 
 // GET '/products/:productId' Get all products
 router.get("/products/:productId", (req, res, next) => {
-  console.log("Product detail");
+  //console.log("Product detail");
   const productId = req.params.productId;
   Product.findById(productId)
     // .populate("review")
@@ -78,7 +78,7 @@ router.get("/products/:productId", (req, res, next) => {
       },
     })
     .then((productFound) => {
-      // console.log("productFound :>> ", productFound);
+      // //console.log("productFound :>> ", productFound);
       res.status(200).json(productFound);
     })
     .catch((err) => {
@@ -88,7 +88,7 @@ router.get("/products/:productId", (req, res, next) => {
 
 // GET '/:productId' Get all products
 router.get("/cart", (req, res, next) => {
-  console.log("/cart get");
+  //console.log("/cart get");
   const userId = req.session.currentUser._id;
   User.findById(userId)
     .populate("basket")
@@ -102,12 +102,12 @@ router.get("/cart", (req, res, next) => {
 
 // GET '/products/categories'
 router.get("/categories", (req, res, next) => {
-  console.log("/categories GET");
+  //console.log("/categories GET");
   Product.find()
     .then((productsFound) => {
       const categoriesArr = [];
       productsFound.forEach((elem) => {
-        // console.log("elem :>> ", elem);
+        // //console.log("elem :>> ", elem);
         categoriesArr.push(elem.category);
       });
       const onlyUnique = (value, index, self) => {
@@ -115,7 +115,7 @@ router.get("/categories", (req, res, next) => {
       };
 
       const response = { data: categoriesArr.filter(onlyUnique) };
-      // console.log("response :>> ", response);
+      // //console.log("response :>> ", response);
       res.status(200).json(response);
     })
     .catch((err) => {
@@ -125,11 +125,11 @@ router.get("/categories", (req, res, next) => {
 
 // GET '/products per categories' Get all products
 router.get("/categories/:category", (req, res, next) => {
-  console.log(" products per categoriesr GET");
+  //console.log(" products per categoriesr GET");
   const category = req.params.category;
   Product.find({ category })
     .then((productList) => {
-      // console.log("productList :>> ", productList);
+      // //console.log("productList :>> ", productList);
       res.status(200).json(productList);
     })
     .catch((err) => {
@@ -153,7 +153,7 @@ router.post("/cart", (req, res, next) => {
 // COMMENTED BECAUSE I CREATED A RELATIONAL COLLECTION
 // // POST  product/:productId/reviews / Create product reviews
 // router.post("/product/:productId/reviews", (req, res, next) => {
-//   console.log("reviews post");
+//   //console.log("reviews post");
 //   const userId = req.session.currentUser._id;
 //   const { title, description, rate, reviewUser, productId } = req.body;
 //   let reviewsUser = [];
@@ -204,7 +204,7 @@ router.post("/cart", (req, res, next) => {
 
 // POST  product/:productId/reviews / Create product reviews
 router.post("/product/:productId/reviews", (req, res, next) => {
-  console.log("reviews create post");
+  //console.log("reviews create post");
   const userId = req.session.currentUser._id;
   const { title, message, rate, productId } = req.body;
   let review = null;
@@ -214,7 +214,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
     .then((reviewCreated) => {
       review = reviewCreated;
       reviewId = reviewCreated._id;
-      console.log("reviewId :>> ", reviewId);
+      //console.log("reviewId :>> ", reviewId);
       const pr = ReviewsRelational.create({ userId, reviewId, productId });
       return pr;
     })
@@ -223,7 +223,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
       return pr;
     })
     .then((productFound) => {
-      console.log("ProductFound :>> ", productFound);
+      //console.log("ProductFound :>> ", productFound);
       let productreviewArr = productFound.review;
       productreviewArr.push(reviewId);
 
@@ -255,9 +255,9 @@ router.get("/product/:productId/review/:reviewId", (req, res, next) => {
     })
     .then((productFound) => {
       let reviewsProductArr = productFound.review;
-      // console.log("reviewsProductArr :>> ", reviewsProductArr);
+      // //console.log("reviewsProductArr :>> ", reviewsProductArr);
       for (let index = 0; index < reviewsProductArr.length; index++) {
-        // console.log("reviewsProductArr[index] :>> ", reviewsProductArr[index]);
+        // //console.log("reviewsProductArr[index] :>> ", reviewsProductArr[index]);
         if (reviewsProductArr[index] == reviewId) {
           reviewsProductArr.splice(index, 1);
         }

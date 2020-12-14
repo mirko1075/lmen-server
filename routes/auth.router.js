@@ -14,7 +14,7 @@ const {
 
 // POST '/auth/signup'
 router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
-  console.log("Signup");
+  //console.log("Signup");
   const {
     firstName,
     lastName,
@@ -31,10 +31,10 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
     email,
     password,
   } = req.body;
-  console.log("SIGNING UP FROM AUTH.ROUTER");
+  //console.log("SIGNING UP FROM AUTH.ROUTER");
   User.findOne({ email })
     .then((foundUser) => {
-      console.log("foundUser :>> ", foundUser);
+      //console.log("foundUser :>> ", foundUser);
       if (foundUser) {
         // If email is already taken, then return error response
 
@@ -81,7 +81,7 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
 
 // POST '/auth/login'
 router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
-  console.log("Login");
+  //console.log("Login");
   const { email, password } = req.body;
 
   User.findOne({ email })
@@ -110,7 +110,7 @@ router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
 
 // POST '/auth/login'
 router.get("/user", isLoggedIn, (req, res, next) => {
-  console.log("Get User");
+  //console.log("Get User");
   const userId = req.session.currentUser._id;
 
   User.findById(userId)
@@ -128,7 +128,7 @@ router.get("/user", isLoggedIn, (req, res, next) => {
 
 // GET '/auth/logout'
 router.get("/logout", isLoggedIn, (req, res, next) => {
-  console.log("Logout");
+  //console.log("Logout");
   req.session.destroy(function (err) {
     if (err) {
       return next(err);
@@ -142,7 +142,7 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
 
 // GET '/auth/me'
 router.get("/me", isLoggedIn, (req, res, next) => {
-  console.log("Me :>> ");
+  //console.log("Me :>> ");
   currentUserSessionData = req.session.currentUser;
 
   res.status(200).json(currentUserSessionData);
@@ -150,7 +150,7 @@ router.get("/me", isLoggedIn, (req, res, next) => {
 
 // POST '/auth/editProfile'
 router.post("/editProfile", isLoggedIn, (req, res, next) => {
-  console.log("Edit Profile");
+  //console.log("Edit Profile");
   const {
     firstName,
     lastName,
@@ -166,19 +166,19 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
     birthDateYear,
     password,
   } = req.body;
-  console.log("req.body :>> ", req.body);
+  //console.log("req.body :>> ", req.body);
   const userId = req.session.currentUser._id;
-  console.log("userId :>> ", userId);
+  //console.log("userId :>> ", userId);
   User.findById(userId)
     .then((user) => {
-      console.log("user :>> ", user);
+      //console.log("user :>> ", user);
       if (!user) {
         // If user with that email can't be found, respond with an error
         return next(createError(404)); // Not Found
       }
-      console.log("password, user.password :>> ", password, user.password);
+      //console.log("password, user.password :>> ", password, user.password);
       const passwordIsValid = bcrypt.compareSync(password, user.password); //  true/false
-      console.log("passwordIsValid :>> ", passwordIsValid);
+      //console.log("passwordIsValid :>> ", passwordIsValid);
       if (passwordIsValid) {
         // set the `req.session.currentUser`, to trigger creation of the session
         // res.status(200).json(user);
@@ -221,7 +221,7 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
 router.get("/cart", isLoggedIn, (req, res, next) => {
   if (req.session.currentUser) {
     const currentUserSessionData = req.session.currentUser;
-    console.log("currentUserSessionData :>> ", currentUserSessionData);
+    //console.log("currentUserSessionData :>> ", currentUserSessionData);
     const pr = User.findById(currentUserSessionData)
       .populate({
         path: "cart",
@@ -231,11 +231,11 @@ router.get("/cart", isLoggedIn, (req, res, next) => {
       })
       .then((userFound) => {
         const cart = userFound.cart;
-        console.log("Retriving cart :>> ", cart);
+        //console.log("Retriving cart :>> ", cart);
         res.status(200).json(cart);
       })
       .catch((err) => {
-        console.log("Error retriving user cart :>> ", err);
+        //console.log("Error retriving user cart :>> ", err);
       });
   } else {
     es.status(200).json({});
@@ -245,11 +245,11 @@ router.get("/cart", isLoggedIn, (req, res, next) => {
 // POST '/auth/cart'
 router.post("/cart", isLoggedIn, (req, res, next) => {
   const cart = req.body;
-  console.log("req.body from route :>> ", req.body);
-  console.log("cart from route :>> ", cart);
+  //console.log("req.body from route :>> ", req.body);
+  //console.log("cart from route :>> ", cart);
   // const cartItem = { id: cart.id, amount: cart.amount };
   // const cartItem = cart;
-  // console.log("cartItem :>> ", cartItem);
+  // //console.log("cartItem :>> ", cartItem);
   const currentUserSessionData = req.session.currentUser._id;
 
   // const pr = User.findOneAndUpdate(
@@ -263,30 +263,30 @@ router.post("/cart", isLoggedIn, (req, res, next) => {
     },
   })
     .then((userUpdated) => {
-      console.log("userUpdated :>> ", userUpdated.cart);
+      //console.log("userUpdated :>> ", userUpdated.cart);
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
-      console.log("err", err);
+      //console.log("err", err);
     });
 });
 
-// POST '/auth/favorites'
+// POST '/auth/favourites'
 router.post("/favourites", isLoggedIn, (req, res, next) => {
   const userId = req.session.currentUser;
   const { productId, favourite } = req.body;
 
   const pr = User.findByIdAndUpdate(userId, {
     $set: {
-      favorites: favourite,
+      favourites: favourite,
     },
   })
     .then((userUpdated) => {
-      console.log("userUpdated :>> ", userUpdated.favorites);
+      //console.log("userUpdated :>> ", userUpdated.favourites);
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
-      console.log("err", err);
+      //console.log("err", err);
     });
 });
 
