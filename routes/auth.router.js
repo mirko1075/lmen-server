@@ -38,7 +38,7 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
       if (foundUser) {
         // If email is already taken, then return error response
 
-        return next(createError(400)); // Bad Request
+        return next(createError(400, "Email is already taken")); // Bad Request
       } else {
         // If email is available, go and create a new user
         const salt = bcrypt.genSaltSync(saltRounds);
@@ -70,12 +70,12 @@ router.post("/signup", isNotLoggedIn, validationLogin, (req, res, next) => {
               .json(createdUser); // res.send()
           })
           .catch((err) => {
-            next(createError(err)); //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
+            next(createError(err, "Error creating user")); //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
           });
       }
     })
     .catch((err) => {
-      next(createError(err));
+      next(createError(err, "Error found"));
     });
 });
 
@@ -100,11 +100,11 @@ router.post("/login", isNotLoggedIn, validationLogin, (req, res, next) => {
 
         res.status(200).json(user);
       } else {
-        next(createError(401)); // Unathorized
+        next(createError(401, "Password not valid")); // Unathorized
       }
     })
     .catch((err) => {
-      next(createError(err));
+      next(createError(err, "User not found"));
     });
 });
 
@@ -164,20 +164,29 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
     birthDateDay,
     birthDateMonth,
     birthDateYear,
+    currentPassword,
     password,
+    repeatPassword,
   } = req.body;
-  //console.log("req.body :>> ", req.body);
+  console.log("req.body :>> ", req.body);
   const userId = req.session.currentUser._id;
-  //console.log("userId :>> ", userId);
+  console.log("userId :>> ", userId);
   User.findById(userId)
     .then((user) => {
-      //console.log("user :>> ", user);
+      console.log("user :>> ", user);
       if (!user) {
         // If user with that email can't be found, respond with an error
         return next(createError(404)); // Not Found
       }
-      //console.log("password, user.password :>> ", password, user.password);
-      const passwordIsValid = bcrypt.compareSync(password, user.password); //  true/false
+      console.log(
+        "password, user.password :>> ",
+        currentPassword,
+        user.password
+      );
+      const passwordIsValid = bcrypt.compareSync(
+        currentPassword,
+        user.password
+      ); //  true/false
       //console.log("passwordIsValid :>> ", passwordIsValid);
       if (passwordIsValid) {
         // set the `req.session.currentUser`, to trigger creation of the session
@@ -201,6 +210,7 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
           birthDateYear,
         })
           .then((modifiedUser) => {
+            console.log("modifiedUser :>> ", modifiedUser);
             res
               .status(200) // Modified
               .json(modifiedUser); // res.send()

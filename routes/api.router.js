@@ -176,12 +176,21 @@ router.post("/product/:productId/reviews", (req, res, next) => {
     .then((productFound) => {
       //console.log("ProductFound :>> ", productFound);
       let productreviewArr = productFound.review;
+      let productRate = productFound.rate;
+      console.log("rate, productRate :>> ", rate, productRate);
       productreviewArr.push(reviewId);
+      productRate
+        ? (productRate += Number(rate))
+        : (productRate = Number(rate));
 
       //UPDATING PRODUCT REVIEWS
       const pr = Product.findByIdAndUpdate(
         { _id: productId },
-        { review: productreviewArr }
+        {
+          review: productreviewArr,
+          rating: productRate,
+          numReviews: productreviewArr.length,
+        }
       );
       return pr;
     })
@@ -194,7 +203,7 @@ router.post("/product/:productId/reviews", (req, res, next) => {
 });
 
 //`/api/product/:productId/reviews`
-router.get("/product/:productId/review/:reviewId", (req, res, next) => {
+router.delete("/product/:productId/review/:reviewId", (req, res, next) => {
   console.log("Removing review");
   const productId = req.params.productId;
   const reviewId = req.params.reviewId;
