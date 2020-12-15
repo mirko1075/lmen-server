@@ -89,7 +89,7 @@ router.get("/products/:productId", (req, res, next) => {
 });
 
 // GET '/cart' Get all products
-router.get("/cart", (req, res, next) => {
+router.get("/cart", isLoggedIn, (req, res, next) => {
   console.log("Get user cart");
   const userId = req.session.currentUser._id;
   User.findById(userId)
@@ -140,7 +140,7 @@ router.get("/categories/:category", (req, res, next) => {
 });
 
 // post '/cart' Update cart
-router.post("/cart", (req, res, next) => {
+router.post("/cart", isLoggedIn, (req, res, next) => {
   console.log("Update user Cart");
   const userId = req.session.currentUser._id;
   const basket = req.body;
@@ -154,9 +154,9 @@ router.post("/cart", (req, res, next) => {
 });
 
 // POST  product/:productId/reviews / Create product reviews
-router.post("/product/:productId/reviews", (req, res, next) => {
+router.post("/product/:productId/reviews", isLoggedIn, (req, res, next) => {
   console.log("reviews create post");
-  const userId = req.session.currentUser._id;
+  const userId = req.session.currentUser ? req.session.currentUser._id : "";
   const { title, message, rate, productId } = req.body;
   let review = null;
   let reviewId = null;
@@ -194,42 +194,46 @@ router.post("/product/:productId/reviews", (req, res, next) => {
 });
 
 //`/api/product/:productId/reviews`
-router.get("/product/:productId/review/:reviewId", (req, res, next) => {
-  console.log("Removing review");
-  const productId = req.params.productId;
-  const reviewId = req.params.reviewId;
-  let review = null;
-  Review.findByIdAndRemove(reviewId)
-    .then((reviewRemoved) => {
-      review = reviewRemoved;
-      const pr = Product.findById(productId);
-      return pr;
-    })
-    .then((productFound) => {
-      let reviewsProductArr = productFound.review;
-      // //console.log("reviewsProductArr :>> ", reviewsProductArr);
-      for (let index = 0; index < reviewsProductArr.length; index++) {
-        // //console.log("reviewsProductArr[index] :>> ", reviewsProductArr[index]);
-        if (reviewsProductArr[index] == reviewId) {
-          reviewsProductArr.splice(index, 1);
+router.get(
+  "/product/:productId/review/:reviewId",
+  isLoggedIn,
+  (req, res, next) => {
+    console.log("Removing review");
+    const productId = req.params.productId;
+    const reviewId = req.params.reviewId;
+    let review = null;
+    Review.findByIdAndRemove(reviewId)
+      .then((reviewRemoved) => {
+        review = reviewRemoved;
+        const pr = Product.findById(productId);
+        return pr;
+      })
+      .then((productFound) => {
+        let reviewsProductArr = productFound.review;
+        // //console.log("reviewsProductArr :>> ", reviewsProductArr);
+        for (let index = 0; index < reviewsProductArr.length; index++) {
+          // //console.log("reviewsProductArr[index] :>> ", reviewsProductArr[index]);
+          if (reviewsProductArr[index] == reviewId) {
+            reviewsProductArr.splice(index, 1);
+          }
         }
-      }
-      const pr = Product.findByIdAndUpdate(
-        { _id: productId },
-        { review: reviewsProductArr }
-      );
-      return pr;
-    })
-    .then((productModified) => {
-      const pr = ReviewsRelational.deleteOne({ reviewId });
-      return pr;
-    })
-    .then((userModified) => {
-      res.status(200).json(review);
-    })
-    .catch((err) => {
-      next(createError(err));
-    });
-});
+        const pr = Product.findByIdAndUpdate(
+          { _id: productId },
+          { review: reviewsProductArr }
+        );
+        return pr;
+      })
+      .then((productModified) => {
+        const pr = ReviewsRelational.deleteOne({ reviewId });
+        return pr;
+      })
+      .then((userModified) => {
+        res.status(200).json(review);
+      })
+      .catch((err) => {
+        next(createError(err));
+      });
+  }
+);
 
 module.exports = router;
