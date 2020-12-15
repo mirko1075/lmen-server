@@ -117,12 +117,12 @@ router.get("/user", isLoggedIn, (req, res, next) => {
     .then((user) => {
       if (!user) {
         // If user with that email can't be found, respond with an error
-        return next(createError(404)); // Not Found
+        return next(createError(404, "User not found")); // Not Found
       }
       res.status(200).json(user);
     })
     .catch((err) => {
-      next(createError(err));
+      next(createError(err, "User not found"));
     });
 });
 
@@ -135,7 +135,7 @@ router.get("/logout", isLoggedIn, (req, res, next) => {
     }
 
     res
-      .status(204) //  No Content
+      .status(200) //  No Content
       .send();
   });
 });
@@ -145,7 +145,7 @@ router.get("/me", isLoggedIn, (req, res, next) => {
   //console.log("Me :>> ");
   currentUserSessionData = req.session.currentUser;
 
-  res.status(200).json(currentUserSessionData);
+  res.status(200, "No current user session").json(currentUserSessionData);
 });
 
 // POST '/auth/editProfile'
@@ -216,14 +216,14 @@ router.post("/editProfile", isLoggedIn, (req, res, next) => {
               .json(modifiedUser); // res.send()
           })
           .catch((err) => {
-            next(createError(err)); //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
+            next(createError(err, "Error updating user")); //  new Error( { message: err, statusCode: 500 } ) // Internal Server Error
           });
       } else {
-        next(createError(401)); // Unathorized
+        next(createError(401, "Password invalid")); // Unathorized
       }
     })
     .catch((err) => {
-      next(createError(err));
+      next(createError(err, "User not found for update"));
     });
 });
 
@@ -243,13 +243,13 @@ router.get("/cart", isLoggedIn, (req, res, next) => {
       .then((userFound) => {
         const cart = userFound.cart;
         console.log("Retriving cart :>> ", cart);
-        res.status(200).json(cart);
+        res.status(200, "Cart retrieved").json(cart);
       })
       .catch((err) => {
-        console.log("Error retriving user cart :>> ", err);
+        next(createError(err, "Error retriving user cart"));
       });
   } else {
-    es.status(200).json({});
+    res.status(200).json({});
   }
 });
 
@@ -278,7 +278,7 @@ router.post("/cart", isLoggedIn, (req, res, next) => {
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
-      //console.log("err", err);
+      next(createError(err, "Error posting user cart"));
     });
 });
 
@@ -297,7 +297,7 @@ router.post("/favourites", isLoggedIn, (req, res, next) => {
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
-      //console.log("err", err);
+      next(createError(err, "Error posting user favourites"));
     });
 });
 
