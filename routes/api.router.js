@@ -80,7 +80,7 @@ router.get("/products/:productId", (req, res, next) => {
       },
     })
     .then((productFound) => {
-      // //console.log("productFound :>> ", productFound);
+      console.log("productFound :>> ", productFound);
       res.status(200).json(productFound);
     })
     .catch((err) => {
@@ -176,12 +176,17 @@ router.post("/product/:productId/reviews", isLoggedIn, (req, res, next) => {
     .then((productFound) => {
       //console.log("ProductFound :>> ", productFound);
       let productreviewArr = productFound.review;
+      let rating = Number(productFound.rating);
+      let numReviews = Number(productFound.numReviews);
+      console.log("rate, rating :>> ", rate, rating);
+      rating += Number(rate);
+      numReviews++;
       productreviewArr.push(reviewId);
 
       //UPDATING PRODUCT REVIEWS
       const pr = Product.findByIdAndUpdate(
         { _id: productId },
-        { review: productreviewArr }
+        { review: productreviewArr, rating, numReviews }
       );
       return pr;
     })
