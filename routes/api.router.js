@@ -24,7 +24,7 @@ router.get("/products", (req, res, next) => {
       },
     })
     .then((productList) => {
-      console.log("productList :>> ", productList);
+      // console.log("productList :>> ", productList);
       res.status(200).json(productList);
     })
     .catch((err) => {
