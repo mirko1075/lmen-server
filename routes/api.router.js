@@ -199,13 +199,14 @@ router.post("/product/:productId/reviews", isLoggedIn, (req, res, next) => {
 });
 
 //`/api/product/:productId/reviews`
-router.get(
+router.delete(
   "/product/:productId/review/:reviewId",
   isLoggedIn,
   (req, res, next) => {
     console.log("Removing review");
-    const productId = req.params.productId;
     const reviewId = req.params.reviewId;
+    const productId = req.params.productId;
+    console.log("reviewId, productId :>> ", reviewId, productId);
     let review = null;
     Review.findByIdAndRemove(reviewId)
       .then((reviewRemoved) => {
