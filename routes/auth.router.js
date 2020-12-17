@@ -276,18 +276,18 @@ router.post("/cart", isLoggedIn, (req, res, next) => {
 router.post("/favourites", isLoggedIn, (req, res, next) => {
   const userId = req.session.currentUser;
   const { productId, favourite } = req.body;
-
+  console.log("Favourites modifying  :>> ", productId, favourite, req.body);
   const pr = User.findByIdAndUpdate(userId, {
     $set: {
       favourites: favourite,
     },
   })
     .then((userUpdated) => {
-      //console.log("userUpdated :>> ", userUpdated.favourites);
+      console.log("userUpdated :>> ", userUpdated);
       res.status(200).json(userUpdated);
     })
     .catch((err) => {
-      //console.log("err", err);
+      console.log("err", err);
     });
 });
 
