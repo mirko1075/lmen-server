@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const createError = require("http-errors");
+const nodemailer = require('nodemailer');
+const {google} = require('googleapis');
+const OAuth2 = google.auth.OAuth2;
 const Product = require("../models/product.model");
 const User = require("../models/user.model");
 const Review = require("../models/review.model");
@@ -178,7 +181,7 @@ router.post("/product/:productId/reviews", isLoggedIn, (req, res, next) => {
       let productreviewArr = productFound.review;
       let rating = Number(productFound.rating);
       let numReviews = Number(productFound.numReviews);
-      console.log("rate, rating :>> ", rate, rating);
+      // console.log("rate, rating :>> ", rate, rating);
       rating += Number(rate);
       numReviews++;
       productreviewArr.push(reviewId);
@@ -206,7 +209,7 @@ router.delete(
     console.log("Removing review");
     const reviewId = req.params.reviewId;
     const productId = req.params.productId;
-    console.log("reviewId, productId :>> ", reviewId, productId);
+    // console.log("reviewId, productId :>> ", reviewId, productId);
     let review = null;
     Review.findByIdAndRemove(reviewId)
       .then((reviewRemoved) => {
@@ -242,4 +245,65 @@ router.delete(
   }
 );
 
+router.post("/sendContact", (req, res, next) => {
+  // MAIL Settings
+console.log('Mail :>> ');
+  const oauth2Client = new OAuth2(
+    "955202149080-6rjcm41f3gsvhiapmmh7ngpqc3nomapl.apps.googleusercontent.com", // ClientID
+    "qxfsS9o-RTP-x7rJESf9oWa5", // Client Secret
+    "https://developers.google.com/oauthplayground" // Redirect URL
+);
+oauth2Client.setCredentials({
+  refresh_token: "1//040QTBjr066tNCgYIARAAGAQSNwF-L9IresvxkJGkVGhbnwMkEcMYDiPWGLwWo5g3RIXoZIb_qzKWgjuPmGb4MlzuvCW5pOTr4bI"
+});
+
+const smtpTransport = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+      type: "OAuth2",
+      user: "mirko.siddi@gmail.com", 
+      clientId: "955202149080-6rjcm41f3gsvhiapmmh7ngpqc3nomapl.apps.googleusercontent.com",
+      clientSecret: "qxfsS9o-RTP-x7rJESf9oWa5",
+      refreshToken: "1//040QTBjr066tNCgYIARAAGAQSNwF-L9IresvxkJGkVGhbnwMkEcMYDiPWGLwWo5g3RIXoZIb_qzKWgjuPmGb4MlzuvCW5pOTr4bI",
+      accessToken: "ya29.A0AfH6SMDGwOvvhBabPih_PhLuHR4g_EwDpBSte7PLsbx6S910DBZjACqQMP6wu-ajH8To6A4usonMvzvmHwKyw8K19J9X2zLMqrRHNZd8ZGC5aB0HS1Ipda4Gi2Hj2UBDPaG8sHZkm-AMRcX-sKRhEG4gpilU"
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
+});
+let {email,message, firstName, lastName} = req.body;
+let name = `${firstName}  ${lastName}  ✔ ${email}`;
+let emailTo='mirko.siddi@gmail.com'
+
+let subject = `Contact from name: ${name} `;
+let htmlTemplate=`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mail</title>
+</head>
+<body>
+    ${message}
+</body>
+</html>
+`
+const mailOptions = {
+  from: email,
+  to: emailTo,
+  subject,
+  generateTextFromHTML: true,
+  html: htmlTemplate
+};
+
+  console.log("Sending contact form");
+
+
+  smtpTransport.sendMail(mailOptions, (error, response) => {
+    error ? console.log(error) : console.log(response);
+    smtpTransport.close();
+  });
+});
 module.exports = router;

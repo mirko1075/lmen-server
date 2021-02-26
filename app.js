@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 const session = require("express-session");
 const MongoStore = require("connect-mongo")(session);
 const cors = require("cors");
+var nodemailer = require("nodemailer");
+
 require("dotenv").config();
 
 const authRouter = require("./routes/auth.router");
